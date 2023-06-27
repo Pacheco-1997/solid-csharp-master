@@ -1,29 +1,16 @@
-﻿using Alura.LeilaoOnline.WebApp.Models;
+﻿using System.Collections.Generic;
+using Alura.LeilaoOnline.WebApp.Models;
 using Microsoft.EntityFrameworkCore;
-using System.Collections.Generic;
-using System.Linq;
 
-namespace Alura.LeilaoOnline.WebApp.Dados.EFCore
+namespace Alura.LeilaoOnline.WebApp.Dados.EfCore
 {
-    public class LeilaoDaoComEFCore : ILeilaoDao
+    public class LeilaoDaoComEfCore : ILeilaoDao
     {
-        private readonly AppDbContext _context;
+        AppDbContext _context;
 
-        public LeilaoDaoComEFCore(AppDbContext context)
+        public LeilaoDaoComEfCore(AppDbContext context)
         {
             _context = context;
-        }
-
-        public IEnumerable<Categoria> BuscarCategorias()
-        {
-            return _context.Categorias.ToList();
-        }
-
-        public IEnumerable<Leilao> BuscarLeiloes()
-        {
-            return _context.Leiloes
-                .Include(l => l.Categoria)
-                .ToList();
         }
 
         public Leilao BuscarLeilaoPorId(int id)
@@ -31,19 +18,23 @@ namespace Alura.LeilaoOnline.WebApp.Dados.EFCore
             return _context.Leiloes.Find(id);
         }
 
-        public void IncluirLeilao(Leilao leilao)
+        public IEnumerable<Leilao> BuscarTodosLeiloes() => _context.Leiloes.Include(l => l.Categoria);
+
+        public IEnumerable<Categoria> BuscarTodasCategorias() => _context.Categorias;
+
+        public void Incluir(Leilao obj)
         {
-            _context.Leiloes.Add(leilao);
+            _context.Leiloes.Add(obj);
             _context.SaveChanges();
         }
 
-        public void AlterarLeilao(Leilao leilao)
+        public void Alterar(Leilao obj)
         {
-            _context.Leiloes.Update(leilao);
+            _context.Leiloes.Update(obj);
             _context.SaveChanges();
         }
 
-        public void ExcluirLeilao(Leilao leilao)
+        public void Excluir(Leilao leilao)
         {
             _context.Leiloes.Remove(leilao);
             _context.SaveChanges();
